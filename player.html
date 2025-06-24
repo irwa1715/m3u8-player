@@ -1,34 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>M3U8 Player</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+    }
+    #player {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
 </head>
-<body style="margin:0;">
+<body>
   <div id="player"></div>
-<script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-<script>
-  const slug = location.hash.replace(/^#/, '');
 
-  fetch(`https://dutamovies-9bc4c-default-rtdb.asia-southeast1.firebasedatabase.app/movies/${slug}.json`)
-    .then(res => res.json())
-    .then(data => {
-      const encoded = encodeURIComponent(data.m3u8);
-      const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
+  <script>
+    async function loadPlayer() {
+      const hash = window.location.hash.substring(1);
+      if (!hash) {
+        document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Slug tidak ditemukan</h2>";
+        return;
+      }
 
-      new Clappr.Player({
-  source: proxy, // ini URL ke Worker Proxy kamu
-  parentId: "#player",
-  autoPlay: true,
-  mimeType: "application/x-mpegURL",
-  width: "100%",
-  height: "100%",
-  baseUrl: "" // <- INI YANG MENYEMBUHKAN MASALAH
-});
-;
+      const slug = hash;
+      const firebaseURL = `https://dutamovies-9bc4c-default-rtdb.asia-southeast1.firebasedatabase.app/movies/${slug}.json`;
 
-</script>
+      try {
+        const res = await fetch(firebaseURL);
+        const data = await res.json();
 
+        if (!data || !data.m3u8) {
+          document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Data tidak ditemukan atau tidak ada m3u8</h2>";
+          return;
+        }
+
+        const m3u8 = data.m3u8;
+        const encoded = encodeURIComponent(m3u8);
+        const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
+
+        new Clappr.Player({
+          source: proxy,
+          parentId: "#player",
+          autoPlay: true,
+          mimeType: "application/x-mpegURL",
+          width: "100%",
+          height: "100%",
+          baseUrl: "" // ✅ penting agar tidak 404
+        });
+
+      } catch (e) {
+        console.error("⚠️ Gagal memuat player:", e);
+        document.body.innerHTML = "<h2 style='color:white;text-align:center'>⚠️ Gagal memuat player</h2>";
+      }
+    }
+
+    loadPlayer();
+  </script>
 </body>
 </html>
