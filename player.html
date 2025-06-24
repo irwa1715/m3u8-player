@@ -48,7 +48,7 @@
     }
 
     // === FETCH m3u8 FROM FIREBASE VIA GAS ===
-    fetch(`https://script.google.com/macros/s/AKfycbYourGASID123/exec?slug=${slug}`)
+    fetch(`https://script.google.com/macros/s/AKfycbweMaXkqUSwx99S2V9vrJjaZ695OKaZ9dLNyDVVvyUQEkblcQ9dioVEXLNy2b2lj1gC/exec?slug=${slug}`)
       .then(res => res.json())
       .then(data => {
         if (!data.m3u8) {
