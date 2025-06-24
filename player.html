@@ -1,52 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>M3U8 Player</title>
-  <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-  <style>
-    html, body { margin: 0; padding: 0; height: 100%; background: #000; }
-    #player { width: 100%; height: 100vh; }
-  </style>
-</head>
-<body>
-  <div id="player"></div>
+const m3u8 = data.m3u8;
+const encoded = encodeURIComponent(m3u8);
+const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
 
-  <script>
-    const firebaseBaseURL = "https://dutamovies-9bc4c-default-rtdb.asia-southeast1.firebasedatabase.app/movies";
-    const token = "RAHASIA123";
-
-    const slug = location.hash.replace("#", "").split("=")[1] || location.hash.replace("#", "");
-
-    if (!slug) {
-      document.body.innerHTML = "<h2 style='color:white;text-align:center;'>❌ Slug tidak ditemukan</h2>";
-      throw new Error("Slug not found");
-    }
-
-    fetch(`${firebaseBaseURL}/${slug}.json`)
-      .then(res => res.json())
-      .then(data => {
-        if (!data || !data.m3u8) {
-          document.body.innerHTML = "<h2 style='color:white;text-align:center;'>❌ M3U8 tidak ditemukan</h2>";
-          throw new Error("M3U8 not found");
-        }
-
-        const m3u8 = data.m3u8;
-        const encoded = encodeURIComponent(m3u8);
-        const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=${token}`;
-
-        new Clappr.Player({
-          source: proxy,
-          parentId: "#player",
-          autoPlay: true,
-          mimeType: "application/x-mpegURL",
-          width: "100%",
-          height: "100%"
-        });
-      })
-      .catch(err => {
-        console.error("❌ Error:", err);
-      });
-  </script>
-</body>
-</html>
+new Clappr.Player({
+  source: proxy,
+  parentId: "#player",
+  autoPlay: true,
+  mimeType: "application/x-mpegURL",
+  width: "100%",
+  height: "100%"
+});
