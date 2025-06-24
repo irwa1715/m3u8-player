@@ -1,34 +1,46 @@
-<div id="player"></div>
-<script>
-  const slug = window.location.hash.substring(1);
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>M3U8 Player</title>
+  <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+</head>
+<body style="margin:0;">
+  <div id="player" style="width:100vw;height:100vh;"></div>
 
-  if (!slug) {
-    alert("Slug tidak ditemukan di URL.");
-    throw new Error("No slug");
-  }
+  <script>
+    const slug = window.location.hash.substring(1);
+    console.log("Current Slug:", slug);
 
-  fetch(`https://dutamovies-9bc4c-default-rtdb.asia-southeast1.firebasedatabase.app/movies/${slug}.json`)
-    .then(res => res.json())
-    .then(data => {
-      if (!data || !data.m3u8) {
-        throw new Error("❌ Data tidak ditemukan atau m3u8 kosong.");
-      }
+    if (!slug) {
+      alert("Slug tidak ditemukan di URL.");
+      throw new Error("No slug");
+    }
 
-      const m3u8 = data.m3u8;
-      const encoded = encodeURIComponent(m3u8);
-      const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
+    fetch(`https://dutamovies-9bc4c-default-rtdb.asia-southeast1.firebasedatabase.app/movies/${slug}.json`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data || !data.m3u8) {
+          throw new Error("❌ Data tidak ditemukan atau m3u8 kosong.");
+        }
 
-      new Clappr.Player({
-        source: proxy,
-        parentId: "#player",
-        autoPlay: true,
-        mimeType: "application/x-mpegURL",
-        width: "100%",
-        height: "100%"
+        const encoded = encodeURIComponent(data.m3u8);
+        const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
+
+        new Clappr.Player({
+          source: proxy,
+          parentId: "#player",
+          autoPlay: true,
+          mimeType: "application/x-mpegURL",
+          width: "100%",
+          height: "100%",
+          playback: { crossOrigin: "anonymous" }
+        });
+      })
+      .catch(err => {
+        console.error("Gagal load:", err);
+        document.getElementById("player").innerHTML = "<p style='color:red'>Gagal memuat video.</p>";
       });
-    })
-    .catch(err => {
-      console.error("Gagal load data:", err);
-      document.getElementById("player").innerHTML = "<p style='color:red'>Gagal memuat video.</p>";
-    });
-</script>
+  </script>
+</body>
+</html>
