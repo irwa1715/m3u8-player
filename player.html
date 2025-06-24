@@ -18,14 +18,15 @@
       const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
 
       new Clappr.Player({
-        source: proxy,
-        parentId: "#player",
-        autoPlay: true,
-        width: "100%",
-        height: "100%",
-        mimeType: "application/x-mpegURL"
-      });
-    });
+  source: proxy,
+  parentId: "#player",
+  autoPlay: true,
+  mimeType: "application/x-mpegURL",
+  width: "100%",
+  height: "100%",
+  baseUrl: ""
+});
+
 </script>
 
 </body>
