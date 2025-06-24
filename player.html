@@ -1,77 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Secure M3U8 Player</title>
-  <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: black;
-      height: 100%;
-    }
-    #player {
-      width: 100%;
-      height: 100vh;
-    }
-  </style>
-</head>
-<body>
-  <div id="player"></div>
+const m3u8 = data.m3u8
+const encoded = encodeURIComponent(m3u8)
+const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`
 
-  <script>
-    // === ANTI DEVTOOLS ===
-    document.addEventListener("contextmenu", (e) => e.preventDefault());
-    document.onkeydown = function (e) {
-      if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
-        return false;
-      }
-    };
-    setInterval(() => {
-      if (
-        window.outerWidth - window.innerWidth > 160 ||
-        window.outerHeight - window.innerHeight > 160
-      ) {
-        document.body.innerHTML = "<h1 style='color:red;text-align:center'>🚫 DevTools Detected. Access Blocked.</h1>";
-      }
-    }, 1000);
-
-    // === EXTRACT SLUG & TOKEN FROM HASH ===
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const slug = hashParams.get("slug");
-    const token = hashParams.get("token");
-
-    if (!slug || !token) {
-      document.body.innerHTML = "<h1 style='color:red;text-align:center'>❌ Invalid or missing parameters</h1>";
-      throw new Error("Missing slug or token");
-    }
-
-    // === FETCH m3u8 FROM FIREBASE VIA GAS ===
-    fetch(`https://script.google.com/macros/s/AKfycbweMaXkqUSwx99S2V9vrJjaZ695OKaZ9dLNyDVVvyUQEkblcQ9dioVEXLNy2b2lj1gC/exec?slug=${slug}`)
-      .then(res => res.json())
-      .then(data => {
-        if (!data.m3u8) {
-          throw new Error("m3u8 not found in response");
-        }
-
-        // === PROXY URL via Cloudflare Worker ===
-        const encodedM3U8 = encodeURIComponent(data.m3u8);
-        const proxyURL = `https://player.sdrama.workers.dev/?url=${encodedM3U8}&token=${token}`;
-
-        // === INIT PLAYER ===
-        new Clappr.Player({
-          source: proxyURL,
-          parentId: "#player",
-          autoPlay: true,
-          width: "100%",
-          height: "100%",
-          mimeType: "application/x-mpegURL"
-        });
-      })
-      .catch(err => {
-        document.body.innerHTML = `<h1 style='color:red;text-align:center'>⚠️ Error: ${err.message}</h1>`;
-      });
-  </script>
-</body>
-</html>
+new Clappr.Player({
+  source: proxy,
+  parentId: "#player",
+  autoPlay: true,
+  width: "100%",
+  height: "100%",
+  mimeType: "application/x-mpegURL"
+})
