@@ -1,12 +1,34 @@
-const m3u8 = data.m3u8;
-const encoded = encodeURIComponent(m3u8);
-const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
+<div id="player"></div>
+<script>
+  const slug = window.location.hash.substring(1);
 
-new Clappr.Player({
-  source: proxy,
-  parentId: "#player",
-  autoPlay: true,
-  mimeType: "application/x-mpegURL",
-  width: "100%",
-  height: "100%"
-});
+  if (!slug) {
+    alert("Slug tidak ditemukan di URL.");
+    throw new Error("No slug");
+  }
+
+  fetch(`https://dutamovies-9bc4c-default-rtdb.asia-southeast1.firebasedatabase.app/movies/${slug}.json`)
+    .then(res => res.json())
+    .then(data => {
+      if (!data || !data.m3u8) {
+        throw new Error("❌ Data tidak ditemukan atau m3u8 kosong.");
+      }
+
+      const m3u8 = data.m3u8;
+      const encoded = encodeURIComponent(m3u8);
+      const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
+
+      new Clappr.Player({
+        source: proxy,
+        parentId: "#player",
+        autoPlay: true,
+        mimeType: "application/x-mpegURL",
+        width: "100%",
+        height: "100%"
+      });
+    })
+    .catch(err => {
+      console.error("Gagal load data:", err);
+      document.getElementById("player").innerHTML = "<p style='color:red'>Gagal memuat video.</p>";
+    });
+</script>
