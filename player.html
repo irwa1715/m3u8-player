@@ -57,7 +57,7 @@
 
         // === PROXY URL via Cloudflare Worker ===
         const encodedM3U8 = encodeURIComponent(data.m3u8);
-        const proxyURL = `https://m3u8-proxy.irwa1715.workers.dev/?url=${encodedM3U8}&token=${token}`;
+        const proxyURL = `https://player.sdrama.workers.dev/?url=${encodedM3U8}&token=${token}`;
 
         // === INIT PLAYER ===
         new Clappr.Player({
