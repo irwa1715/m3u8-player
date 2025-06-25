@@ -29,20 +29,19 @@
       }
 
       const slug = hash;
-      const firebaseURL = `https://script.google.com/macros/s/AKfycbweMaXkqUSwx99S2V9vrJjaZ695OKaZ9dLNyDVVvyUQEkblcQ9dioVEXLNy2b2lj1gC/exec?slug=${slug}&key=RAHASIA123`;
+      const firebaseURL = `https://dutamovies-9bc4c-default-rtdb.asia-southeast1.firebasedatabase.app/movies/${slug}.json`;
 
       try {
         const res = await fetch(firebaseURL);
         const data = await res.json();
 
-        if (!data || !data.m3u8) {
+        if (!data || !data.secure || !data.secure.m) {
           document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Data tidak ditemukan atau tidak ada m3u8</h2>";
           return;
         }
 
-        const m3u8 = data.m3u8;
-        const encoded = encodeURIComponent(m3u8);
-        const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
+        const m3u8 = data.secure.m;
+        const proxy = `https://player.sdrama.workers.dev/${slug}.m3u8`;
 
         new Clappr.Player({
           source: proxy,
@@ -51,7 +50,7 @@
           mimeType: "application/x-mpegURL",
           width: "100%",
           height: "100%",
-          baseUrl: "" // ✅ penting agar tidak 404
+          baseUrl: ""
         });
 
       } catch (e) {
