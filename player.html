@@ -30,17 +30,17 @@
 
   <script>
     async function loadPlayer() {
-      const hash = window.location.hash.substring(1);
-      if (!hash) {
+      const slug = window.location.hash.substring(1);
+      if (!slug) {
         document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Slug tidak ditemukan</h2>";
         return;
       }
 
-      const slug = hash;
-      const firebaseURL = `https://script.google.com/macros/s/AKfycbweMaXkqUSwx99S2V9vrJjaZ695OKaZ9dLNyDVVvyUQEkblcQ9dioVEXLNy2b2lj1gC/exec?slug=${slug}&key=RAHASIA123`;
+      // URL GAS hanya untuk ambil judul & poster (opsional)
+      const metaURL = `https://script.google.com/macros/s/AKfycbweMaXkqUSwx99S2V9vrJjaZ695OKaZ9dLNyDVVvyUQEkblcQ9dioVEXLNy2b2lj1gC/exec?slug=${slug}&key=RAHASIA123`;
 
       try {
-        const res = await fetch(firebaseURL);
+        const res = await fetch(metaURL);
         const data = await res.json();
 
         if (!data || !data.m3u8) {
@@ -48,20 +48,18 @@
           return;
         }
 
-        const m3u8 = data.m3u8;
-        const encoded = encodeURIComponent(m3u8);
-        const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
+        // Langsung ambil dari Worker proxy berdasarkan slug
+        const videoUrl = `https://player.sdrama.workers.dev/${slug}.m3u8`;
 
         document.getElementById("loading").remove();
 
         new Clappr.Player({
-          source: proxy,
+          source: videoUrl,
           parentId: "#player",
           autoPlay: true,
           mimeType: "application/x-mpegURL",
           width: "100%",
-          height: "100%",
-          baseUrl: "",
+          height: "100%"
         });
 
       } catch (e) {
