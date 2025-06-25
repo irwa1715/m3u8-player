@@ -9,15 +9,23 @@
       padding: 0;
       height: 100%;
       background: #000;
+      font-family: Arial, sans-serif;
     }
     #player {
       width: 100%;
       height: 100vh;
     }
+    #loading {
+      color: white;
+      text-align: center;
+      margin-top: 20%;
+      font-size: 1.5em;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
 </head>
 <body>
+  <div id="loading">⏳ Memuat player...</div>
   <div id="player"></div>
 
   <script>
@@ -44,6 +52,8 @@
         const encoded = encodeURIComponent(m3u8);
         const proxy = `https://player.sdrama.workers.dev/?url=${encoded}&token=RAHASIA123`;
 
+        document.getElementById("loading").remove();
+
         new Clappr.Player({
           source: proxy,
           parentId: "#player",
@@ -51,7 +61,7 @@
           mimeType: "application/x-mpegURL",
           width: "100%",
           height: "100%",
-          baseUrl: ""
+          baseUrl: "",
         });
 
       } catch (e) {
