@@ -36,20 +36,18 @@
         return;
       }
 
-      // URL GAS hanya untuk ambil judul & poster (opsional)
       const metaURL = `https://script.google.com/macros/s/AKfycbweMaXkqUSwx99S2V9vrJjaZ695OKaZ9dLNyDVVvyUQEkblcQ9dioVEXLNy2b2lj1gC/exec?slug=${slug}&key=RAHASIA123`;
 
       try {
         const res = await fetch(metaURL);
         const data = await res.json();
 
-        if (!data || !data.m3u8) {
-          document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Data tidak ditemukan atau tidak ada m3u8</h2>";
+        if (!data || !data.player) {
+          document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Data tidak ditemukan atau tidak ada player</h2>";
           return;
         }
 
-        // Langsung ambil dari Worker proxy berdasarkan slug
-        const videoUrl = `https://player.sdrama.workers.dev/${slug}.m3u8`;
+        const videoUrl = data.player; // HANYA dari Firebase, bukan fallback
 
         document.getElementById("loading").remove();
 
