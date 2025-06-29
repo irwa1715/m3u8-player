@@ -14,6 +14,7 @@
     #player {
       width: 100%;
       height: 100vh;
+      position: relative;
     }
     #loading {
       color: white;
@@ -24,13 +25,15 @@
     .control-button {
       position: absolute;
       bottom: 80px;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       color: white;
       border: none;
-      padding: 10px;
+      padding: 10px 15px;
       cursor: pointer;
       font-size: 16px;
-      z-index: 9999;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
     #rewind {
       left: 20px;
@@ -38,16 +41,18 @@
     #forward {
       right: 20px;
     }
+    .controls-visible .control-button {
+      opacity: 1;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
 </head>
 <body>
   <div id="loading">⏳ Memuat player...</div>
-  <div id="player"></div>
-
-  <!-- Tombol maju/mundur -->
-  <button id="rewind" class="control-button">⏪ 10s</button>
-  <button id="forward" class="control-button">⏩ 10s</button>
+  <div id="player">
+    <button id="rewind" class="control-button">⏪ 10s</button>
+    <button id="forward" class="control-button">⏩ 10s</button>
+  </div>
 
   <script>
     async function loadPlayer() {
@@ -83,7 +88,6 @@
           }
         });
 
-        // Tambahkan kontrol
         document.getElementById("rewind").onclick = () => {
           if (player && player.getCurrentTime) {
             player.seek(Math.max(player.getCurrentTime() - 10, 0));
@@ -95,6 +99,17 @@
             player.seek(Math.min(player.getCurrentTime() + 10, player.getDuration()));
           }
         };
+
+        // 🔄 Tampilkan kontrol saat mouse bergerak
+        let timeout;
+        const container = document.getElementById('player');
+        container.addEventListener('mousemove', () => {
+          container.classList.add('controls-visible');
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            container.classList.remove('controls-visible');
+          }, 3000);
+        });
 
       } catch (e) {
         console.error("⚠️ Gagal memuat player:", e);
