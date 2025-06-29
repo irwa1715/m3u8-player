@@ -43,10 +43,12 @@
         const res = await fetch(metaURL);
         const data = await res.json();
 
-        if (!data || !data.video) {
-          document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Video tidak ditemukan</h2>";
-          return;
-        }
+       const videoUrl = data.m3u8;
+if (!videoUrl) {
+  document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Data tidak ditemukan atau tidak ada player</h2>";
+  return;
+}
+
 
         document.getElementById("loading").remove();
 
