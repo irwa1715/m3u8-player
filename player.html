@@ -43,20 +43,32 @@
         const data = await res.json();
 
         if (!data || !data.player) {
-          document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Video tidak ditemukan</h2>";
+          document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Data tidak ditemukan atau tidak ada player</h2>";
           return;
         }
 
+        const videoUrl = data.player;
         document.getElementById("loading").remove();
 
         new Clappr.Player({
-          source: data.player,
+          source: videoUrl,
           parentId: "#player",
           autoPlay: true,
           mimeType: "application/x-mpegURL",
           width: "100%",
-          height: "100%"
+          height: "100%",
+          playback: {
+            crossOrigin: "anonymous"
+          }
         });
+
       } catch (e) {
         console.error("⚠️ Gagal memuat player:", e);
-        document.body.innerHTML = "<h2 style='color:white;text-align:center'>⚠️ G
+        document.body.innerHTML = "<h2 style='color:white;text-align:center'>⚠️ Gagal memuat player</h2>";
+      }
+    }
+
+    loadPlayer();
+  </script>
+</body>
+</html>
