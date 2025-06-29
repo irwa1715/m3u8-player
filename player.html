@@ -21,12 +21,33 @@
       margin-top: 20%;
       font-size: 1.5em;
     }
+    .control-button {
+      position: absolute;
+      bottom: 80px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 9999;
+    }
+    #rewind {
+      left: 20px;
+    }
+    #forward {
+      right: 20px;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
 </head>
 <body>
   <div id="loading">⏳ Memuat player...</div>
   <div id="player"></div>
+
+  <!-- Tombol maju/mundur -->
+  <button id="rewind" class="control-button">⏪ 10s</button>
+  <button id="forward" class="control-button">⏩ 10s</button>
 
   <script>
     async function loadPlayer() {
@@ -50,7 +71,7 @@
         const videoUrl = data.player;
         document.getElementById("loading").remove();
 
-        new Clappr.Player({
+        const player = new Clappr.Player({
           source: videoUrl,
           parentId: "#player",
           autoPlay: true,
@@ -61,6 +82,19 @@
             crossOrigin: "anonymous"
           }
         });
+
+        // Tambahkan kontrol
+        document.getElementById("rewind").onclick = () => {
+          if (player && player.getCurrentTime) {
+            player.seek(Math.max(player.getCurrentTime() - 10, 0));
+          }
+        };
+
+        document.getElementById("forward").onclick = () => {
+          if (player && player.getCurrentTime && player.getDuration) {
+            player.seek(Math.min(player.getCurrentTime() + 10, player.getDuration()));
+          }
+        };
 
       } catch (e) {
         console.error("⚠️ Gagal memuat player:", e);
