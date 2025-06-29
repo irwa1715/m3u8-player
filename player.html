@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>M3U8 Player</title>
@@ -36,38 +36,27 @@
         return;
       }
 
-      const GAS_URL = "https://script.google.com/macros/s/AKfycbweMaXkqUSwx99S2V9vrJjaZ695OKaZ9dLNyDVVvyUQEkblcQ9dioVEXLNy2b2lj1gC/exec";
-      const metaURL = `${GAS_URL}?slug=${slug}&key=RAHASIA123`;
+      const metaURL = `https://script.google.com/macros/s/AKfycbweMaXkqUSwx99S2V9vrJjaZ695OKaZ9dLNyDVVvyUQEkblcQ9dioVEXLNy2b2lj1gC/exec?slug=${slug}&key=RAHASIA123`;
 
       try {
         const res = await fetch(metaURL);
         const data = await res.json();
 
-       const videoUrl = data.m3u8;
-if (!videoUrl) {
-  document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Data tidak ditemukan atau tidak ada player</h2>";
-  return;
-}
-
+        if (!data || !data.player) {
+          document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Video tidak ditemukan</h2>";
+          return;
+        }
 
         document.getElementById("loading").remove();
 
         new Clappr.Player({
-          source: data.video,
+          source: data.player,
           parentId: "#player",
           autoPlay: true,
           mimeType: "application/x-mpegURL",
           width: "100%",
-          height: "100%",
+          height: "100%"
         });
-
       } catch (e) {
         console.error("⚠️ Gagal memuat player:", e);
-        document.body.innerHTML = "<h2 style='color:white;text-align:center'>⚠️ Gagal memuat player</h2>";
-      }
-    }
-
-    loadPlayer();
-  </script>
-</body>
-</html>
+        document.body.innerHTML = "<h2 style='color:white;text-align:center'>⚠️ G
